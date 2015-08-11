@@ -11,10 +11,22 @@
 
 using namespace v8;
 
-void Method(const FunctionCallbackInfo<Value>& args) {
+void Close(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "world"));
+	int sock;
+
+	if (args.Length() < 1) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,"socket is not specified")));
+        return;
+    }
+    if (!args[0]->IsNumber()) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,"socket is not an number")));
+        return;
+    }
+
+	sock = args[0]->NumberValue();
+    args.GetReturnValue().Set(Number::New(isolate,close(sock)));
 }
 
 void Connect(const FunctionCallbackInfo<Value>& args){
@@ -34,6 +46,33 @@ void Connect(const FunctionCallbackInfo<Value>& args){
     connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
     Local<Number> num = Number::New(isolate, sockfd);
     args.GetReturnValue().Set(num);
+}
+
+void Read(const FunctionCallbackInfo<Value>& args){
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+    	int sock, nBytes;
+    	char buf[BUFSIZE];
+
+    	if (args.Length() < 1) {
+    	    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,"socket is not specified")));
+    	    return;
+    	}
+    	if (!args[0]->IsNumber()) {
+            isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,"socket is not an number")));
+            return;
+    	}
+
+    	sock = args[0]->NumberValue();
+    	nBytes = recv(sock, buf, BUFSIZE-1, 0);
+    	if (nBytes <= 0) {
+    		 isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,"recv() failed")));
+             return;
+    	} else {
+    		buf[nBytes] = '\0';
+    		args.GetReturnValue().Set(String::NewFromUtf8(isolate, buf));
+    	}
+
 }
 
 void Write(const FunctionCallbackInfo<Value>& args){
@@ -83,15 +122,17 @@ void Write(const FunctionCallbackInfo<Value>& args){
     		remaining -= batch;
     		nBytes += batch;
     	}
-  Local<Number> num = Number::New(isolate, nBytes);
+     Local<Number> num = Number::New(isolate, nBytes);
      args.GetReturnValue().Set(num);
 
 }
 
+
 void init(Handle<Object> exports) {
-  NODE_SET_METHOD(exports, "hello", Method);
+  NODE_SET_METHOD(exports,"close", Close);
   NODE_SET_METHOD(exports,"connect",Connect);
   NODE_SET_METHOD(exports,"write",Write);
+  NODE_SET_METHOD(exports,"read",Read);
 }
 
 NODE_MODULE(cnet, init)
