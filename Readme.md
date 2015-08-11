@@ -11,7 +11,7 @@ and if you want to use this module you should have a really good reason to do so
 Usage
 --------------
 ```
-    var cnet = require('cnet');
+    var cnet = require('c-net');
     var socket = cnet.connect('host',port);
     cnet.write(socket,'0x4139@Gmail.com');
     var data = cnet.read(socket);

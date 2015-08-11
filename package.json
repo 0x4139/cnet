@@ -1,5 +1,5 @@
 {
-  "name": "cnet",
+  "name": "c-net",
   "version": "1.0.0",
   "description": "cnet is a synchronous TCP library for Node.js written in c",
   "main": "main.js",
