@@ -1,0 +1,27 @@
+{
+  "name": "cnet",
+  "version": "1.0.0",
+  "description": "cnet is a synchronous TCP library for Node.js written in c",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0x4139/cnet.git"
+  },
+  "keywords": [
+    "sync",
+    "net",
+    "synchrnous",
+    "tcp"
+  ],
+  "author": "0x4139@gmail.com",
+  "license": "MIT",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/0x4139/cnet/issues"
+  },
+  "homepage": "https://github.com/0x4139/cnet#readme"
+}
